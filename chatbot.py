@@ -17,7 +17,7 @@ from langchain.llms import HuggingFaceEndpoint
 
 
 
-openai_api_key = ${{ secrets.OPENAI_API_KEY}}
+openai_api_key = os.getenv("OPENAI_API_KEY")
     if openai_api_key is None:
         raise ValueError("OpenAI API key not found.")
 
