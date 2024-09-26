@@ -10,12 +10,13 @@ from langchain.prompts.prompt import PromptTemplate
 from langchain.memory import ConversationBufferMemory
 from config import HUGGINGFACEHUB_API_TOKEN
 
-# Set Hugging Face API token
-os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGINGFACEHUB_API_TOKEN
+from langchain import HuggingFaceHub
 
-# Load the LLM
-hf_model = "mistralai/Mistral-7B-Instruct-v0.3"  # Your Hugging Face model
-llm = HuggingFaceEndpoint(repo_id=hf_model)
+# Hugging Face Model and Token Setup
+hf_model = "mistralai/Mistral-7B-Instruct-v0.3"
+huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
+
+llm = HuggingFaceHub(repo_id=hf_model, huggingfacehub_api_token=huggingface_token)
 
 # Load the tourism data from JSON file
 json_file_path = "ALL_countries_document .json"  # Adjust if needed
