@@ -13,10 +13,9 @@ from config import HUGGINGFACEHUB_API_TOKEN
 from langchain import HuggingFaceHub
 
 # Hugging Face Model and Token Setup
+os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGINGFACEHUB_API_TOKEN
 hf_model = "mistralai/Mistral-7B-Instruct-v0.3"
-huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
-
-llm = HuggingFaceHub(repo_id=hf_model, huggingfacehub_api_token=huggingface_token)
+llm = HuggingFaceEndpoint(repo_id=hf_model)
 
 # Load the tourism data from JSON file
 json_file_path = "ALL_countries_document .json"  # Adjust if needed
