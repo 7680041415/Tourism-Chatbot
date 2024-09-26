@@ -49,7 +49,7 @@ vector_db_path = os.path.join("faiss_index")  # Use relative path
 os.makedirs(vector_db_path, exist_ok=True)  # Create folder if it doesn't exist
 vector_db = FAISS.from_documents(docs1, embeddings)
 vector_db.save_local(vector_db_path)
-vector_db = FAISS.load_local(vector_db_path, embeddings, allow_dangerous_deserialization=True)
+vector_db = FAISS.load_local(vector_db_path, embeddings)
 retriever = vector_db.as_retriever(search_kwargs={"k": 2})
 
 # Initialize memory for the chat
