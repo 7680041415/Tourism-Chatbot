@@ -8,25 +8,26 @@ from langchain.vectorstores import FAISS
 from langchain.chains import ConversationalRetrievalChain
 from langchain.prompts.prompt import PromptTemplate
 from langchain.memory import ConversationBufferMemory
+from config import HUGGINGFACEHUB_API_TOKEN
 from langchain import HuggingFaceHub
 
-# Ensure Hugging Face Model and Token Setup
+# Hugging Face Model and Token Setup
 hf_model = "mistralai/Mistral-7B-Instruct-v0.3"
 huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
-# Initialize the LLM model from Hugging Face
+# Initialize the language model
 llm = HuggingFaceHub(
     repo_id=hf_model,
     huggingfacehub_api_token=huggingface_token,
-    model_kwargs={"temperature": 0.7}
+    model_kwargs={"temperature": 0.7}  # Optional: Set other parameters like temperature
 )
 
-# Load the tourism data from the JSON file
-json_file_path = "ALL_countries_document .json"  # Adjust the path if needed
+# Load the tourism data from JSON file
+json_file_path = "ALL_countries_document.json"  # Adjust if needed
 with open(json_file_path, 'r') as file:
     data1 = json.load(file)
 
-# Convert loaded JSON data into Document objects
+# Convert the loaded JSON data into Document objects
 documents = []
 for item in data1:  # Iterate over the list of dictionaries
     url = item.get("URL", "")  # Get the URL
@@ -57,7 +58,7 @@ def init_memory():
 
 memory = init_memory()
 
-# Update the prompt template to fit tourism context
+# Update the prompt template to fit the tourism context
 template = """
 You are a knowledgeable assistant with information about various countries and their tourism.
 Answer the question based on the provided context below.
@@ -69,9 +70,11 @@ Tourism context:
 {context}
 
 Question: {question}
-Response:"""
+Response:
+"""
 
-prompt = PromptTemplate(template=template, input_variables=["context", "question"])
+# Ensure input variables match the prompt
+prompt = PromptTemplate(template=template, input_variables=["chat_history", "context", "question"])
 
 # Create the conversational retrieval chain
 qa_chain = ConversationalRetrievalChain.from_llm(
@@ -86,6 +89,7 @@ qa_chain = ConversationalRetrievalChain.from_llm(
 def ask_question(query):
     try:
         result = qa_chain({"question": query})
-        return result.get("answer", "Sorry, I couldn't find an answer.")
+        return result["answer"]
     except Exception as e:
         return f"An error occurred: {str(e)}"
+
