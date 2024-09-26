@@ -13,11 +13,18 @@ from langchain_huggingface import HuggingFaceEndpoint
 from langchain.llms import HuggingFaceHub
 
 
+# Set the Hugging Face API token
+huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")  # Replace with your token if needed
 
+# Set the URL for the Hugging Face model (replace 'bigcode/starcoder2-3b' with your model of choice)
+endpoint_url = "https://api-inference.huggingface.co/models/bigcode/starcoder2-3b"
 
-llm = HuggingFaceHub(repo_id='tiiuae/falcon-7b-instruct', huggingfacehub_api_token=HUGGINGFACEHUB_API_TOKEN)
-llm.client.api_url = 'https://api-inference.huggingface.co/models/tiiuae/falcon-7b-instruct'
-llm.invoke('foo bar')
+# Initialize the HuggingFaceEndpoint
+llm = HuggingFaceEndpoint(
+    endpoint_url=endpoint_url,
+    huggingfacehub_api_token=huggingface_token,
+  # Optional, depending on the model
+)
 
 
 # Now llm can be used as the language model in Langchain
