@@ -15,16 +15,9 @@ from langchain.llms import HuggingFaceHub
 
 
 
-# Define the model
-hf_model = "mistralai/Mistral-7B-Instruct-v0.3"
-huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
-
-# Specify parameters directly
-llm = HuggingFaceHub(
-    repo_id=hf_model,
-    huggingfacehub_api_token=huggingface_token,
-     # Specify temperature directly
-)
+llm = HuggingFaceHub(repo_id='tiiuae/falcon-7b-instruct', huggingfacehub_api_token=HUGGINGFACEHUB_API_TOKEN)
+llm.client.api_url = 'https://api-inference.huggingface.co/models/tiiuae/falcon-7b-instruct'
+llm.invoke('foo bar')
 
 
 # Now llm can be used as the language model in Langchain
