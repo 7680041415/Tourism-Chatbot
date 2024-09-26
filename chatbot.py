@@ -58,7 +58,7 @@ vector_db = FAISS.from_documents(docs_split, embeddings)
 vector_db.save_local(vector_db_path)
 
 # Load the vector store
-vector_db = FAISS.load_local(vector_db_path, embeddings, allow_dangerous_deserialization=True)
+vector_db = FAISS.load_local(vector_db_path, embeddings)
 retriever = vector_db.as_retriever(search_kwargs={"k": 2})
 
 
