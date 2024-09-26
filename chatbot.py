@@ -15,16 +15,20 @@ from langchain.llms import HuggingFaceHub
 
 from langchain.llms import HuggingFaceEndpoint
 
-from langchain.llms import HuggingFaceEndpoint
-import os
 
-openai_api_key = os.getenv("OPENAI_API_KEY")
-if openai_api_key is None:
-        raise ValueError("OpenAI API key not found.")
-llm = ChatOpenAI(model="gpt-3.5-turbo", openai_api_key=openai_api_key)
 
-# Now llm can be used as the language model in Langchain
+huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
+# Set the endpoint URL for the desired model
+endpoint_url = "https://api-inference.huggingface.co/models/bigcode/starcoder2-3b"
+
+# Initialize the HuggingFaceEndpoint with the correct task
+llm = HuggingFaceEndpoint(
+    endpoint_url=endpoint_url,
+    huggingfacehub_api_token=huggingface_token,
+    task="text-generation",  # Ensure the correct task is set
+    model_kwargs={"temperature": 0.7}  # Optional kwargs
+)
 
 # Update the JSON file path to your tourism data
 json_file_path = "ALL_countries_document .json"
