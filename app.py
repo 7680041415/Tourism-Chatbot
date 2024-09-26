@@ -1,5 +1,5 @@
 import streamlit as st
-from chatbot import load_chatbot, ask_question 
+
 
 # Streamlit UI
 st.title("Tourism Information Chatbot")
