@@ -23,7 +23,7 @@ huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 llm = HuggingFaceHub(
     repo_id=hf_model,
     huggingfacehub_api_token=huggingface_token,
-    temperature=0.7  # Specify temperature directly
+     # Specify temperature directly
 )
 
 
