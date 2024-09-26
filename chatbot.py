@@ -36,7 +36,7 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=150
 docs1 = text_splitter.split_documents(documents)
 
 # Set up embeddings
-embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+embedding_model = "sentence-transformers/all-MiniLM-l6-v2"
 embeddings_folder = "embeddings_cache"  # Local cache folder
 embeddings = HuggingFaceEmbeddings(model_name=embedding_model, cache_folder=embeddings_folder)
 
