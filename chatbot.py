@@ -9,11 +9,18 @@ from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
 from langchain import HuggingFaceHub
 from langchain.prompts import PromptTemplate
+import logging
 
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-# Initialize Hugging Face model and token
+# Initialize Hugging Face model and token (via Streamlit Cloud's Secrets Manager)
 hf_model = "mistralai/Mistral-7B-Instruct-v0.3"
-huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
+huggingface_token = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
+if not huggingface_token:
+    st.error("Hugging Face API token is missing.")
+    st.stop()
 
 # Initialize the LLM
 llm = HuggingFaceHub(
@@ -22,8 +29,8 @@ llm = HuggingFaceHub(
     model_kwargs={"temperature": 0.7}
 )
 
-# Load the tourism data from JSON file
-json_file_path = "ALL_countries_document .json"  # Ensure this path is correct
+# Load the tourism data from JSON file (Ensure the file exists in the GitHub repo)
+json_file_path = os.path.join(os.path.dirname(__file__), "ALL_countries_document.json")  
 with open(json_file_path, 'r') as file:
     data = json.load(file)
 
@@ -41,17 +48,11 @@ docs1 = text_splitter.split_documents(documents)
 
 # Set up embeddings and vector store
 embedding_model = "sentence-transformers/all-MiniLM-l6-v2"
-embeddings_folder = os.path.join("embeddings_cache")  # Use relative path
-os.makedirs(embeddings_folder, exist_ok=True)  # Create folder if it doesn't exist
-# Initialize embeddings
-embeddings = HuggingFaceEmbeddings(model_name=embedding_model, cache_folder=embeddings_folder)
+# No need for saving embedding cache in Streamlit Cloud, work in memory
+embeddings = HuggingFaceEmbeddings(model_name=embedding_model)
 
-# Create and save the vector store
-vector_db_path = os.path.join("faiss_index")  # Use relative path
-os.makedirs(vector_db_path, exist_ok=True)  # Create folder if it doesn't exist
+# Initialize FAISS and use it in-memory (no need to save/load locally in Streamlit Cloud)
 vector_db = FAISS.from_documents(docs1, embeddings)
-vector_db.save_local(vector_db_path)
-vector_db = FAISS.load_local(vector_db_path, embeddings)
 retriever = vector_db.as_retriever(search_kwargs={"k": 2})
 
 # Initialize memory for the chat
@@ -62,7 +63,11 @@ def init_memory():
         return_messages=True
     )
 
-memory = init_memory()
+# Check if memory exists in session state
+if 'memory' not in st.session_state:
+    st.session_state.memory = init_memory()
+
+memory = st.session_state.memory
 
 # Update the prompt template to fit tourism context
 template = """
@@ -79,6 +84,8 @@ Question: {question}
 Response:"""
 
 prompt = PromptTemplate(template=template, input_variables=["chat_history", "context", "question"])
+
+# Initialize the conversational chain
 chain = ConversationalRetrievalChain.from_llm(
     llm=llm,
     retriever=retriever,
@@ -91,8 +98,19 @@ chain = ConversationalRetrievalChain.from_llm(
 def ask_question(query):
     try:
         result = chain({"question": query})
+        logger.info(f"User question: {query}")
+        logger.info(f"Response: {result['answer']}")
         return result["answer"]
     except Exception as e:
-        return f"An error occurred: {str(e)}"
+        logger.error(f"An error occurred: {str(e)}")
+        return "Sorry, I encountered an issue processing your request."
 
-
+# Streamlit interface
+st.title("Tourism Assistant")
+query = st.text_input("Ask a question about tourism:")
+if st.button("Submit"):
+    if query:
+        response = ask_question(query)
+        st.write(response)
+    else:
+        st.warning("Please enter a question.")
