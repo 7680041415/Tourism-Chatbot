@@ -18,7 +18,7 @@ hf_model = "mistralai/Mistral-7B-Instruct-v0.3"  # Your Hugging Face model
 llm = HuggingFaceEndpoint(repo_id=hf_model)
 
 # Load the tourism data from JSON file
-json_file_path = "ALL_countries_document.json"  # Adjust if needed
+json_file_path = "ALL_countries_document .json"  # Adjust if needed
 with open(json_file_path, 'r') as file:
     data1 = json.load(file)
 
