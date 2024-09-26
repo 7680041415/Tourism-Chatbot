@@ -35,7 +35,7 @@ for item in data:  # Iterate over the list of dictionaries
 
 # Set up the text splitter
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=150)
-docs_split = text_splitter.split_documents(documents)
+docs1 = text_splitter.split_documents(documents)
 
 # Set up embeddings and vector store
 embedding_model = "sentence-transformers/all-MiniLM-l6-v2"
