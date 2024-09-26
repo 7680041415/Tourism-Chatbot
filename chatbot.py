@@ -17,7 +17,6 @@ huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 llm = HuggingFaceHub(
     repo_id=hf_model,
     huggingfacehub_api_token=huggingface_token,
-    model_kwargs={"temperature": 0.7}
 )
 
 # Load the tourism data from JSON file
