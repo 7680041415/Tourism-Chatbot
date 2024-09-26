@@ -12,7 +12,7 @@ from config import HUGGINGFACEHUB_API_TOKEN
 from langchain import HuggingFaceHub
 
 # Hugging Face Model and Token Setup
-hf_model = "mistralai/Mistral-7B-Instruct-v0.3"
+hf_model = "gpt2"
 
 
 # Initialize the language model with basic parameters
