@@ -8,6 +8,8 @@ from langchain.vectorstores import FAISS
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
 from langchain import HuggingFaceHub
+from langchain.prompts import PromptTemplate
+
 
 # Initialize Hugging Face model and token
 hf_model = "mistralai/Mistral-7B-Instruct-v0.3"
