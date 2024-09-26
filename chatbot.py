@@ -97,7 +97,11 @@ chain = ConversationalRetrievalChain.from_llm(
 # Function to ask questions to the chatbot
 def ask_question(query):
     try:
-        result = chain({"question": query})
+        # Ensure chat history is retrieved properly
+        result = chain({
+            "question": query,
+            "chat_history": memory.load_memory_variables({})["chat_history"]
+        })
         logger.info(f"User question: {query}")
         logger.info(f"Response: {result['answer']}")
         return result["answer"]
