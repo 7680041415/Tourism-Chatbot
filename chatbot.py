@@ -19,11 +19,9 @@ from langchain.llms import HuggingFaceEndpoint
 import os
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
-    if openai_api_key is None:
+if openai_api_key is None:
         raise ValueError("OpenAI API key not found.")
-
-
-    llm = ChatOpenAI(model="gpt-3.5-turbo", openai_api_key=openai_api_key)
+llm = ChatOpenAI(model="gpt-3.5-turbo", openai_api_key=openai_api_key)
 
 # Now llm can be used as the language model in Langchain
 
