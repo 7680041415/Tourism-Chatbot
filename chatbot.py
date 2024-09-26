@@ -13,18 +13,19 @@ from langchain_huggingface import HuggingFaceEndpoint
 from langchain.llms import HuggingFaceHub
 
 
-# Initialize Hugging Face API token
+
+
+# Define the model
+hf_model = "mistralai/Mistral-7B-Instruct-v0.3"
 huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
-# Specify the model endpoint, e.g., bigcode/starcoder2-3b
-endpoint_url = f"https://api-inference.huggingface.co/models/bigcode/starcoder2-3b"
-
-# Initialize the HuggingFaceEndpoint with the inference API URL
-llm = HuggingFaceEndpoint(
-    endpoint_url=endpoint_url,
+# Specify parameters directly
+llm = HuggingFaceHub(
+    repo_id=hf_model,
     huggingfacehub_api_token=huggingface_token,
-    model_kwargs={"temperature": 0.7}  # Customize your parameters if needed
+    temperature=0.7  # Specify temperature directly
 )
+
 
 # Now llm can be used as the language model in Langchain
 
