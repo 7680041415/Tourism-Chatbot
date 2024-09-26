@@ -6,6 +6,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
 from langchain.chains import ConversationalRetrievalChain
+from langchain.prompts.prompt import PromptTemplate
 from langchain.memory import ConversationBufferMemory
 from langchain import HuggingFaceHub
 
@@ -21,7 +22,7 @@ llm = HuggingFaceHub(
 )
 
 # Load the tourism data from the JSON file
-json_file_path = "ALL_countries_document .json"  # Adjust the path if needed
+json_file_path = "ALL_countries_document.json"  # Adjust the path if needed
 with open(json_file_path, 'r') as file:
     data1 = json.load(file)
 
@@ -47,20 +48,44 @@ embeddings = HuggingFaceEmbeddings(model_name=embedding_model, cache_folder=embe
 vector_store = FAISS.from_documents(docs1, embeddings)
 
 # Initialize memory for the chat
-memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+def init_memory():
+    return ConversationBufferMemory(
+        output_key="answer",
+        memory_key="chat_history",
+        return_messages=True
+    )
+
+memory = init_memory()
+
+# Update the prompt template to fit tourism context
+template = """
+You are a knowledgeable assistant with information about various countries and their tourism.
+Answer the question based on the provided context below.
+
+Previous conversation:
+{chat_history}
+
+Tourism context:
+{context}
+
+Question: {question}
+Response:"""
+
+prompt = PromptTemplate(template=template, input_variables=["context", "question"])
 
 # Create the conversational retrieval chain
 qa_chain = ConversationalRetrievalChain.from_llm(
     llm=llm,
     retriever=vector_store.as_retriever(),
     memory=memory,
-    verbose=True
+    return_source_documents=True,
+    combine_docs_chain_kwargs={"prompt": prompt}
 )
 
 # Function to ask questions to the chatbot
 def ask_question(query):
     try:
-        result = qa_chain({"question": query})  # Ensure that the input is in the expected format
+        result = qa_chain({"question": query})
         return result.get("answer", "Sorry, I couldn't find an answer.")
     except Exception as e:
         return f"An error occurred: {str(e)}"
