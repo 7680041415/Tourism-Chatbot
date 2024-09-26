@@ -1,5 +1,8 @@
 import streamlit as st
+from chatbot import load_chatbot  # Ensure the load_chatbot function is defined
 
+# Load the chatbot and the ConversationalRetrievalChain
+qa_chain, vector_store = load_chatbot()  # Load your chain and vector store
 
 # Streamlit UI
 st.title("Tourism Information Chatbot")
