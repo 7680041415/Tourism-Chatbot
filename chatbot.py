@@ -74,8 +74,6 @@ template = """
 You are a knowledgeable assistant with information about various countries and their tourism.
 Answer the question based on the provided context below.
 
-Previous conversation:
-{chat_history}
 
 Tourism context:
 {context}
@@ -83,7 +81,7 @@ Tourism context:
 Question: {question}
 Response:"""
 
-prompt = PromptTemplate(template=template, input_variables=["chat_history", "context", "question"])
+prompt = PromptTemplate(template=template, input_variables=[ "context", "question"])
 
 # Initialize the conversational chain
 chain = ConversationalRetrievalChain.from_llm(
