@@ -69,11 +69,12 @@ if 'memory' not in st.session_state:
 
 memory = st.session_state.memory
 
-# Update the prompt template to fit tourism context
 template = """
 You are a knowledgeable assistant with information about various countries and their tourism.
 Answer the question based on the provided context below.
 
+Previous conversation:
+{chat_history}
 
 Tourism context:
 {context}
@@ -81,7 +82,9 @@ Tourism context:
 Question: {question}
 Response:"""
 
-prompt = PromptTemplate(template=template, input_variables=[ "context", "question"])
+# Ensure input variables match exactly what we pass in later
+prompt = PromptTemplate(template=template, input_variables=["chat_history", "context", "question"])
+
 
 # Initialize the conversational chain
 chain = ConversationalRetrievalChain.from_llm(
@@ -92,20 +95,24 @@ chain = ConversationalRetrievalChain.from_llm(
     combine_docs_chain_kwargs={"prompt": prompt}
 )
 
-# Function to ask questions to the chatbot
 def ask_question(query):
     try:
-        # Ensure chat history is retrieved properly
+        # Ensure chat history is initialized properly
+        chat_history = memory.load_memory_variables({}).get("chat_history", "")
+
+        # Check if chat_history is empty, and ensure it is passed correctly
         result = chain({
             "question": query,
-            "chat_history": memory.load_memory_variables({})["chat_history"]
+            "chat_history": chat_history or "No previous conversation.",  # Handle empty chat history
         })
+        
         logger.info(f"User question: {query}")
         logger.info(f"Response: {result['answer']}")
         return result["answer"]
     except Exception as e:
         logger.error(f"An error occurred: {str(e)}")
-        return "Sorry, I encountered an issue processing your request."
+        return f"Sorry, I encountered an issue processing your request: {str(e)}"
+
 
 # Streamlit interface
 st.title("Tourism Assistant")
