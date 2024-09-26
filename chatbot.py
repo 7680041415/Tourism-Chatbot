@@ -11,16 +11,24 @@ from langchain import HuggingFaceHub
 from config import HUGGINGFACEHUB_API_TOKEN
 from langchain_huggingface import HuggingFaceEndpoint
 from langchain.llms import HuggingFaceHub
+import os
+from langchain import HuggingFaceEndpoint
 
-# Initialize Hugging Face model and token
-hf_model = "mistralai/Mistral-7B-Instruct-v0.3"
+# Initialize Hugging Face API token
 huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
-# Initialize the LLM
-llm = HuggingFaceHub(
-    repo_id=hf_model,
-    huggingfacehub_api_token=huggingface_token
+# Specify the model endpoint, e.g., bigcode/starcoder2-3b
+endpoint_url = f"https://api-inference.huggingface.co/models/bigcode/starcoder2-3b"
+
+# Initialize the HuggingFaceEndpoint with the inference API URL
+llm = HuggingFaceEndpoint(
+    endpoint_url=endpoint_url,
+    huggingfacehub_api_token=huggingface_token,
+    model_kwargs={"temperature": 0.7}  # Customize your parameters if needed
 )
+
+# Now llm can be used as the language model in Langchain
+
 
 # Update the JSON file path to your tourism data
 json_file_path = "ALL_countries_document .json"
@@ -98,7 +106,6 @@ qa_chain = ConversationalRetrievalChain.from_llm(
     retriever=retriever,
     memory=memory,
     return_source_documents=True,
-    combine_docs_chain_kwargs={"prompt": prompt}
 )
 
 # Function to ask questions to the chatbot
