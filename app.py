@@ -44,4 +44,4 @@ if user_input := st.chat_input("Ask about tourism information:"):
 if "feedback" in st.session_state:
     st.write(st.session_state.feedback)
 
-print(documents)
+
