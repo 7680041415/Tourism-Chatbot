@@ -15,18 +15,23 @@ from langchain.llms import HuggingFaceHub
 
 from langchain.llms import HuggingFaceEndpoint
 
+from langchain.llms import HuggingFaceEndpoint
+import os
+
 # Set your Hugging Face API token
-huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")  # Ensure this is set correctly
+huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
 # Set the endpoint URL for the desired model
 endpoint_url = "https://api-inference.huggingface.co/models/bigcode/starcoder2-3b"
 
-# Initialize the HuggingFaceEndpoint
+# Initialize the HuggingFaceEndpoint with the correct task
 llm = HuggingFaceEndpoint(
     endpoint_url=endpoint_url,
     huggingfacehub_api_token=huggingface_token,
+    task="text-generation",  # Ensure the correct task is set
     model_kwargs={"temperature": 0.7}  # Optional kwargs
 )
+
 
 # Now llm can be used as the language model in Langchain
 
