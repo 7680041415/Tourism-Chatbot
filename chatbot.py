@@ -11,8 +11,7 @@ from langchain import HuggingFaceHub
 from config import HUGGINGFACEHUB_API_TOKEN
 from langchain_huggingface import HuggingFaceEndpoint
 from langchain.llms import HuggingFaceHub
-import os
-from langchain import HuggingFaceEndpoint
+
 
 # Initialize Hugging Face API token
 huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
