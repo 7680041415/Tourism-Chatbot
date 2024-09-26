@@ -22,7 +22,11 @@ llm = HuggingFaceHub(
     huggingfacehub_api_token=huggingface_token
 )
 
-
+# Update the JSON file path to your tourism data
+json_file_path = "ALL_countries_document .json"
+with open(json_file_path, 'r') as file:
+    data = json.load(file)
+    
 # Convert the loaded JSON data into Document objects
 documents = []
 for item in data:  # Iterate over the list of dictionaries
