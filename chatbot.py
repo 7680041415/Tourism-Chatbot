@@ -8,7 +8,7 @@ from langchain.vectorstores import FAISS
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
 from langchain import HuggingFaceHub
-from config import HUGGINGFACEHUB_API_TOKEN,OPENAI_API_KEY
+from config import HUGGINGFACEHUB_API_TOKEN
 from langchain_huggingface import HuggingFaceEndpoint
 from langchain.llms import HuggingFaceHub
 
@@ -17,18 +17,12 @@ from langchain.llms import HuggingFaceEndpoint
 
 
 
-huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
+openai_api_key = ${{ secrets.OPENAI_API_KEY)
+    if openai_api_key is None:
+        raise ValueError("OpenAI API key not found.")
 
-# Set the endpoint URL for the desired model
-endpoint_url = "https://api-inference.huggingface.co/models/gpt2"
 
-# Initialize the HuggingFaceEndpoint with the correct task
-llm = HuggingFaceEndpoint(
-    endpoint_url=endpoint_url,
-    huggingfacehub_api_token=huggingface_token,
-    task="text-generation",  # Ensure the correct task is set
-    model_kwargs={"temperature": 0.7}  # Optional kwargs
-)
+    llm = ChatOpenAI(model="gpt-3.5-turbo", openai_api_key=openai_api_key)
 
 # Update the JSON file path to your tourism data
 json_file_path = "ALL_countries_document .json"
