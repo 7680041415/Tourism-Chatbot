@@ -20,7 +20,7 @@ from langchain.llms import HuggingFaceEndpoint
 huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
 # Set the endpoint URL for the desired model
-endpoint_url = "https://api-inference.huggingface.co/models/bigcode/starcoder2-3b"
+endpoint_url = "https://api-inference.huggingface.co/models/gpt2"
 
 # Initialize the HuggingFaceEndpoint with the correct task
 llm = HuggingFaceEndpoint(
