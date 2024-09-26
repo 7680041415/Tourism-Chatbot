@@ -37,12 +37,30 @@ for item in data:  # Iterate over the list of dictionaries
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=150)
 docs_split = text_splitter.split_documents(documents)
 
-# Set up embeddings
-embedding_model = "sentence-transformers/all-MiniLM-l6-v2"
-embeddings = HuggingFaceEmbeddings(model_name=embedding_model, cache_folder="embeddings_cache")
+import os
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.vectorstores import FAISS
 
-# Create the FAISS vector store directly from documents
-vector_store = FAISS.from_documents(docs_split, embeddings)
+# Set up embeddings and vector store
+embedding_model = "sentence-transformers/all-MiniLM-l6-v2"
+embeddings_folder = os.path.join("embeddings_cache")  # Use relative path
+os.makedirs(embeddings_folder, exist_ok=True)  # Create folder if it doesn't exist
+
+# Initialize embeddings
+embeddings = HuggingFaceEmbeddings(model_name=embedding_model, cache_folder=embeddings_folder)
+
+# Create and save the vector store
+vector_db_path = os.path.join("faiss_index2")  # Use relative path
+os.makedirs(vector_db_path, exist_ok=True)  # Create folder if it doesn't exist
+
+# Create the vector store
+vector_db = FAISS.from_documents(docs1, embeddings)
+vector_db.save_local(vector_db_path)
+
+# Load the vector store
+vector_db = FAISS.load_local(vector_db_path, embeddings, allow_dangerous_deserialization=True)
+retriever = vector_db.as_retriever(search_kwargs={"k": 2})
+
 
 # Initialize memory for the chat
 def init_memory():
@@ -75,7 +93,7 @@ prompt = PromptTemplate(template=template, input_variables=["chat_history", "con
 # Create the conversational retrieval chain
 qa_chain = ConversationalRetrievalChain.from_llm(
     llm=llm,
-    retriever=vector_store.as_retriever(),
+    retriever=retriever,
     memory=memory,
     return_source_documents=True,
     combine_docs_chain_kwargs={"prompt": prompt}
