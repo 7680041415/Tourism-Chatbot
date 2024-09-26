@@ -78,7 +78,7 @@ Tourism context:
 Question: {question}
 Response:"""
 
-prompt = PromptTemplate(template=template, input_variables=["context", "question"])
+prompt = PromptTemplate(template=template, input_variables=["chat_history", "context", "question"])
 chain = ConversationalRetrievalChain.from_llm(
     llm=llm,
     retriever=retriever,
