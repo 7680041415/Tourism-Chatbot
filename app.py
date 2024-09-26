@@ -1,14 +1,15 @@
 import streamlit as st
-from chatbot import ask_question # Ensure the load_chatbot function is defined
-
-
+from chatbot import ask_question  # Import the ask_question function from chatbot.py
 
 # Streamlit UI
 st.title("Tourism Information Chatbot")
+
+# Sidebar
 with st.sidebar:
     st.header("Get Help with Tourism")
     st.write("Ask questions about different countries and their tourism information.")
 
+# Initialize chat messages in session state
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -20,18 +21,21 @@ for message in st.session_state.messages:
 # User input for the chatbot
 if user_input := st.chat_input("Ask about tourism information:"):
 
-    # Display user's message
+    # Display user's message in the chat
     st.chat_message("user").markdown(user_input)
 
-    # Add to session state
+    # Add user's message to session state
     st.session_state.messages.append({"role": "user", "content": user_input})
 
-    # Use the chain to get the answer from the tourism data
+    # Use the chatbot to get the answer
     with st.spinner("Searching for the answer..."):
-        response = chain({"question": user_input})["answer"]
+        response = ask_question(user_input)  # Use ask_question to get the response from the chatbot
 
     # Display the chatbot's response
     st.chat_message("assistant").markdown(response)
+
+    # Add the chatbot's response to session state
+    st.session_state.messages.append({"role": "assistant", "content": response})
 
     # Add Like and Dislike buttons
     col1, col2 = st.columns(2)
@@ -45,5 +49,3 @@ if user_input := st.chat_input("Ask about tourism information:"):
 # Display feedback message if it exists
 if "feedback" in st.session_state:
     st.write(st.session_state.feedback)
-
-
