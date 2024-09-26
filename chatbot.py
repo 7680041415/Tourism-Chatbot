@@ -107,9 +107,4 @@ def ask_question(query):
     except Exception as e:
         return f"An error occurred: {str(e)}"
 
-# Streamlit interface
-st.title("Tourism Chatbot")
-user_input = st.text_input("Ask a question about tourism:")
-if user_input:
-    response = ask_question(user_input)
-    st.write(response)
+
