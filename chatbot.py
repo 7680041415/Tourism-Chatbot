@@ -13,12 +13,12 @@ from langchain import HuggingFaceHub
 
 # Hugging Face Model and Token Setup
 hf_model = "mistralai/Mistral-7B-Instruct-v0.3"
-huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
+
 
 # Initialize the language model with basic parameters
 llm = HuggingFaceHub(
     repo_id=hf_model,
-    huggingfacehub_api_token=huggingface_token,
+    huggingfacehub_api_token= HUGGINGFACEHUB_API_TOKEN,
     model_kwargs={"task": "text2text-generation", "temperature": 0.7}  # Ensure task is set appropriately
 )
 
