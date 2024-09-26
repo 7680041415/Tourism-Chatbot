@@ -8,19 +8,10 @@ from langchain.vectorstores import FAISS
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
 from langchain import HuggingFaceHub
-from langchain.prompts import PromptTemplate
-import logging
 
-# Setup logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# Initialize Hugging Face model and token (via Streamlit Cloud's Secrets Manager)
+# Initialize Hugging Face model and token
 hf_model = "mistralai/Mistral-7B-Instruct-v0.3"
-huggingface_token = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
-if not huggingface_token:
-    st.error("Hugging Face API token is missing.")
-    st.stop()
+huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
 # Initialize the LLM
 llm = HuggingFaceHub(
@@ -29,8 +20,8 @@ llm = HuggingFaceHub(
     model_kwargs={"temperature": 0.7}
 )
 
-# Load the tourism data from JSON file (Ensure the file exists in the GitHub repo)
-json_file_path = os.path.join(os.path.dirname(__file__), "ALL_countries_document.json")  
+# Load the tourism data from JSON file
+json_file_path = "ALL_countries_document.json"  # Ensure this path is correct
 with open(json_file_path, 'r') as file:
     data = json.load(file)
 
@@ -44,16 +35,14 @@ for item in data:  # Iterate over the list of dictionaries
 
 # Set up the text splitter
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=150)
-docs1 = text_splitter.split_documents(documents)
+docs_split = text_splitter.split_documents(documents)
 
-# Set up embeddings and vector store
+# Set up embeddings
 embedding_model = "sentence-transformers/all-MiniLM-l6-v2"
-# No need for saving embedding cache in Streamlit Cloud, work in memory
-embeddings = HuggingFaceEmbeddings(model_name=embedding_model)
+embeddings = HuggingFaceEmbeddings(model_name=embedding_model, cache_folder="embeddings_cache")
 
-# Initialize FAISS and use it in-memory (no need to save/load locally in Streamlit Cloud)
-vector_db = FAISS.from_documents(docs1, embeddings)
-retriever = vector_db.as_retriever(search_kwargs={"k": 2})
+# Create the FAISS vector store directly from documents
+vector_store = FAISS.from_documents(docs_split, embeddings)
 
 # Initialize memory for the chat
 def init_memory():
@@ -63,12 +52,9 @@ def init_memory():
         return_messages=True
     )
 
-# Check if memory exists in session state
-if 'memory' not in st.session_state:
-    st.session_state.memory = init_memory()
+memory = init_memory()
 
-memory = st.session_state.memory
-
+# Update the prompt template to fit tourism context
 template = """
 You are a knowledgeable assistant with information about various countries and their tourism.
 Answer the question based on the provided context below.
@@ -82,44 +68,30 @@ Tourism context:
 Question: {question}
 Response:"""
 
-# Ensure input variables match exactly what we pass in later
+from langchain.prompts.prompt import PromptTemplate
+
 prompt = PromptTemplate(template=template, input_variables=["chat_history", "context", "question"])
 
-
-# Initialize the conversational chain
-chain = ConversationalRetrievalChain.from_llm(
+# Create the conversational retrieval chain
+qa_chain = ConversationalRetrievalChain.from_llm(
     llm=llm,
-    retriever=retriever,
+    retriever=vector_store.as_retriever(),
     memory=memory,
     return_source_documents=True,
     combine_docs_chain_kwargs={"prompt": prompt}
 )
 
+# Function to ask questions to the chatbot
 def ask_question(query):
     try:
-        # Ensure chat history is initialized properly
-        chat_history = memory.load_memory_variables({}).get("chat_history", "")
-
-        # Check if chat_history is empty, and ensure it is passed correctly
-        result = chain({
-            "question": query,
-            "chat_history": chat_history or "No previous conversation.",  # Handle empty chat history
-        })
-        
-        logger.info(f"User question: {query}")
-        logger.info(f"Response: {result['answer']}")
+        result = qa_chain({"question": query})
         return result["answer"]
     except Exception as e:
-        logger.error(f"An error occurred: {str(e)}")
-        return f"Sorry, I encountered an issue processing your request: {str(e)}"
-
+        return f"An error occurred: {str(e)}"
 
 # Streamlit interface
-st.title("Tourism Assistant")
-query = st.text_input("Ask a question about tourism:")
-if st.button("Submit"):
-    if query:
-        response = ask_question(query)
-        st.write(response)
-    else:
-        st.warning("Please enter a question.")
+st.title("Tourism Chatbot")
+user_input = st.text_input("Ask a question about tourism:")
+if user_input:
+    response = ask_question(user_input)
+    st.write(response)
