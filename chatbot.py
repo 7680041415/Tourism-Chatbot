@@ -11,11 +11,15 @@ from langchain.memory import ConversationBufferMemory
 from config import HUGGINGFACEHUB_API_TOKEN
 
 from langchain import HuggingFaceHub
-
-# Hugging Face Model and Token Setup
-os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGINGFACEHUB_API_TOKEN
 hf_model = "mistralai/Mistral-7B-Instruct-v0.3"
-llm = HuggingFaceEndpoint(repo_id=hf_model)
+huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
+
+# Ensure that you're not overriding the task, and that it's using the correct LLM task.
+llm = HuggingFaceHub(
+    repo_id=hf_model,  # The model you're trying to use
+    huggingfacehub_api_token=huggingface_token,
+    model_kwargs={"temperature": 0.7}  # Optional: Set other parameters like temperature
+)
 
 # Load the tourism data from JSON file
 json_file_path = "ALL_countries_document .json"  # Adjust if needed
