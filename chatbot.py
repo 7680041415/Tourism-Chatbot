@@ -15,11 +15,11 @@ from langchain import HuggingFaceHub
 hf_model = "mistralai/Mistral-7B-Instruct-v0.3"
 huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
-# Initialize the language model
+# Initialize the language model with basic parameters
 llm = HuggingFaceHub(
     repo_id=hf_model,
     huggingfacehub_api_token=huggingface_token,
-    model_kwargs={"temperature": 0.7}  # Optional: Set other parameters like temperature
+    model_kwargs={"task": "text2text-generation", "temperature": 0.7}  # Ensure task is set appropriately
 )
 
 # Load the tourism data from JSON file
@@ -93,3 +93,10 @@ def ask_question(query):
     except Exception as e:
         return f"An error occurred: {str(e)}"
 
+# Streamlit UI (optional)
+if __name__ == "__main__":
+    st.title("Tourism Chatbot")
+    user_input = st.text_input("Ask a question about tourism:")
+    if user_input:
+        response = ask_question(user_input)
+        st.write(response)
