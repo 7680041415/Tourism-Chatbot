@@ -22,7 +22,7 @@ llm = HuggingFaceHub(
 )
 
 # Load the tourism data from the JSON file
-json_file_path = "ALL_countries_document.json"  # Adjust the path if needed
+json_file_path = "ALL_countries_document .json"  # Adjust the path if needed
 with open(json_file_path, 'r') as file:
     data1 = json.load(file)
 
