@@ -8,16 +8,11 @@ from langchain.vectorstores import FAISS
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
 from langchain import HuggingFaceHub
-
-# Initialize Hugging Face model and token
+from config import HUGGINGFACEHUB_API_TOKEN
+os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGINGFACEHUB_API_TOKEN
+from langchain_huggingface import HuggingFaceEndpoint
 hf_model = "mistralai/Mistral-7B-Instruct-v0.3"
-huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
-
-# Initialize the LLM
-llm = HuggingFaceHub(
-    repo_id=hf_model,
-    huggingfacehub_api_token=huggingface_token,
-)
+llm = HuggingFaceEndpoint(repo_id=hf_model)
 
 # Load the tourism data from JSON file
 json_file_path = "ALL_countries_document .json"  # Ensure this path is correct
