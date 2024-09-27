@@ -23,6 +23,7 @@ from langchain.llms import HuggingFaceEndpoint
 
 # Initialize Hugging Face model and token
 hf_model = "meta-llama/Llama-2-13b-chat-hf"
+
 huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
 # Initialize the LLM
@@ -30,6 +31,8 @@ llm = HuggingFaceHub(
     repo_id=hf_model,
     huggingfacehub_api_token=huggingface_token
 )
+
+
 
 # Update the JSON file path to your tourism data
 json_file_path = "ALL_countries_document .json"
