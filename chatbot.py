@@ -22,7 +22,7 @@ from langchain.llms import HuggingFaceEndpoint
 #llm = ChatOpenAI(model="gpt-3.5-turbo", openai_api_key=openai_api_key)
 
 # Initialize Hugging Face model and token
-hf_model = "Falcon-40B-instruct"
+hf_model = "meta-llama/Llama-2-13b-chat-hf"
 huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
 # Initialize the LLM
