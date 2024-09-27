@@ -16,10 +16,19 @@ from langchain.llms import HuggingFaceEndpoint
 
 
 
-openai_api_key = os.getenv("OPENAI_API_KEY")
-if openai_api_key is None:
-    raise ValueError("OpenAI API key not found.")
-llm = ChatOpenAI(model="gpt-3.5-turbo", openai_api_key=openai_api_key)
+#openai_api_key = os.getenv("OPENAI_API_KEY")
+#if openai_api_key is None:
+    #raise ValueError("OpenAI API key not found.")
+#llm = ChatOpenAI(model="gpt-3.5-turbo", openai_api_key=openai_api_key)
+
+# Set Hugging Face API token
+os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGINGFACEHUB_API_TOKEN
+
+# Load the LLM
+from langchain_huggingface import HuggingFaceEndpoint
+hf_model = "mistralai/Mistral-7B-Instruct-v0.3"
+llm = HuggingFaceEndpoint(repo_id=hf_model)
+
 
 # Update the JSON file path to your tourism data
 json_file_path = "ALL_countries_document .json"
