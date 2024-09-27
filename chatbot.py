@@ -24,10 +24,11 @@ from langchain.llms import HuggingFaceEndpoint
 # Set Hugging Face API token
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGINGFACEHUB_API_TOKEN
 
-# Load the LLM
-from langchain_huggingface import HuggingFaceEndpoint
-hf_model = "mistralai/Mistral-7B-Instruct-v0.3"
-llm = HuggingFaceEndpoint(repo_id=hf_model)
+llm = HuggingFaceHub(
+    repo_id="gpt2",  # Replace with the model you want, e.g., gpt2, bloom, etc.
+    model_kwargs={"temperature": 0.7, "max_length": 512},
+    huggingfacehub_api_key=HUGGINGFACEHUB_API_TOKEN
+)
 
 
 # Update the JSON file path to your tourism data
