@@ -21,15 +21,15 @@ from langchain.llms import HuggingFaceEndpoint
     #raise ValueError("OpenAI API key not found.")
 #llm = ChatOpenAI(model="gpt-3.5-turbo", openai_api_key=openai_api_key)
 
-# Set Hugging Face API token
-os.environ["HUGGINGFACEHUB_API_TOKEN"] = HUGGINGFACEHUB_API_TOKEN
+# Initialize Hugging Face model and token
+hf_model = "mistralai/Mistral-7B-Instruct-v0.3"
+huggingface_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
+# Initialize the LLM
 llm = HuggingFaceHub(
-    repo_id="gpt2",  # Replace with the model you want, e.g., gpt2, bloom, etc.
-    model_kwargs={"temperature": 0.7, "max_length": 512},
-    huggingfacehub_api_key=HUGGINGFACEHUB_API_TOKEN
+    repo_id=hf_model,
+    huggingfacehub_api_token=huggingface_token
 )
-
 
 # Update the JSON file path to your tourism data
 json_file_path = "ALL_countries_document .json"
