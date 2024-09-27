@@ -11,8 +11,7 @@ from langchain import HuggingFaceHub
 from config import HUGGINGFACEHUB_API_TOKEN
 from langchain_huggingface import HuggingFaceEndpoint
 from langchain.llms import HuggingFaceHub
-
-
+from langchain.chat_models import ChatOpenAI
 from langchain.llms import HuggingFaceEndpoint
 
 
